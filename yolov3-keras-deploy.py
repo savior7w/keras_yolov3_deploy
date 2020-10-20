@@ -3,7 +3,7 @@ import flask
 import io
 import json
 #import cv2
-
+import base64
 
 
 import colorsys
@@ -50,6 +50,15 @@ def get_anchors():
     anchors = [float(x) for x in anchors.split(',')]
     return np.array(anchors).reshape(-1, 2)
 
+def get_imageBase64String(imageFilePath):
+    if not os.path.exists(imageFilePath):
+        image_base64_string = ''
+    else:
+        with open(imageFilePath, 'rb') as file:
+            image_bytes = file.read()
+        image_base64_bytes = base64.b64encode(image_bytes)
+        image_base64_string = image_base64_bytes.decode('utf-8')
+    return image_base64_string
 
 #加载yolov3模型
 def load_yolo_model():
@@ -155,7 +164,15 @@ def predicted_result(image):
 @app.route('/predict', methods=['GET', 'POST'])  # 使用methods参数处理不同HTTP方法
 def home():
     if request.method == 'POST':
-        filepath = request.form['path']
+        # filepath = request.form['path']
+        baseimg = request.form['path']
+        # baseimg = get_imageBase64String(filepath)
+
+        img = base64.b64decode(baseimg)
+        filepath = "image_db/test.jpg"
+        file = open(filepath, 'wb')
+        file.write(img)
+        file.close()
 
         image = prepare_image(filepath)
         res = predicted_result(image)
