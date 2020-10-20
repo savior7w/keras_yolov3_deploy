@@ -164,9 +164,7 @@ def predicted_result(image):
 @app.route('/predict', methods=['GET', 'POST'])  # 使用methods参数处理不同HTTP方法
 def home():
     if request.method == 'POST':
-        # filepath = request.form['path']
         baseimg = request.form['path']
-        # baseimg = get_imageBase64String(filepath)
 
         img = base64.b64decode(baseimg)
         filepath = "image_db/test.jpg"
